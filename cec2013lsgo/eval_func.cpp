@@ -26,11 +26,12 @@ using namespace std;
 
 Benchmarks* generateFuncObj(int funcID);
 
-static Benchmarks* bench=NULL;
+static Benchmarks* bench = NULL;
 
 Benchmarks* generateFuncObj(int funcID);
 
 void set_func(int funcID) {
+    if (bench != NULL) free_func();
     bench = generateFuncObj(funcID);
     bench->nextRun();
 }
@@ -52,7 +53,6 @@ void free_func(void) {
    if (bench) {
       delete bench;
    }
-
    bench = NULL;
 }
 
