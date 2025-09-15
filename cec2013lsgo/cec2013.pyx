@@ -4,8 +4,6 @@ import os
 import sys
 import pkgutil
 
-from collections import namedtuple
-
 import cython
 from libc.stdlib cimport malloc, free
 
