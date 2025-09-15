@@ -1,14 +1,14 @@
 [build-system]
 requires = [
-    "setuptools>=61.0",
-    "Cython>=3.0.0",
+    "setuptools>=80.9.0",
+    "Cython>=3.1.3",
 ]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "cec2013lsgo"
 version = "2.0"
-requires-python = ">=3.12"
+requires-python = ">=3.13"
 authors = [
   {name = "Daniel Molina", email = "dmolina@decsai.ugr.es"},
   {name = "Klemen Berkovic", email = "klemen.berkovic@student.um.si"},
