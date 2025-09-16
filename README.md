@@ -97,8 +97,8 @@ These two functionalities are done with two methods in Benchmark class:
 
 ```
 >>> from cec2013lsgo.cec2013 import Benchmark
->>> bench = Benchmark()
->>> bench.get_info(1)
+>>> bench = Benchmark(1)
+>>> bench.get_info()
 {'best': 0.0,
  'dimension': 1000,
  'lower': -100.0,
@@ -110,16 +110,15 @@ These two functionalities are done with two methods in Benchmark class:
 
 ```
 >>> from numpy.random import rand
->>> info = bench.get_info(1)
+>>> info = bench.get_info()
 >>> dim = info['dimension']
->>> sol = info['lower']+rand(dim)*(info['upper']-info['lower'])
+>>> sol = info['lower'] + rand(dim) * (info['upper'] - info['lower'])
 ```
 
 ## Evaluate a solution
 
 ```
->>> fun_fitness = bench.get_function(1)
->>> fun_fitness(sol)
+>>> bench.eval(sol)
 464006824710.75995
 ```
 
@@ -136,3 +135,9 @@ Python package and C++ version
 
 - Python wrapping
   <2018-01-08>
+
+- C++ version
+  <2025-9-15>
+
+- Python wrapping
+  <2025-09-16>
