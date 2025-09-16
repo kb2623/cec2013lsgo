@@ -4,6 +4,7 @@ import os
 import pkgutil
 
 from libc.stdlib cimport malloc, free
+from libcpp.string cimport string
 
 from cec2013decl cimport (
     Benchmarks,
@@ -25,17 +26,16 @@ def file_load(data_dir: str, file_name: str):
 
 
 cdef class Benchmark:
-    cdef public str input_data_dir
     cdef Benchmarks * bench
 
     def __init__(self, no_fun: int = 1, input_data_dir: str = 'inputdata'):
         # Create benchmark
         self.bench = generateFuncObj(no_fun)
         # Set input data dir
-        self.input_data_dir = input_data_dir
-        self.set_data_dir(self.input_data_dir)
+        cdef string cpp_path = input_data_dir.encode()
+        self.bench.set_data_dir(cpp_path)
         # Create input data dir
-        os.makedirs(self.input_data_dir, exist_ok=True)
+        os.makedirs(input_data_dir, exist_ok=True)
         # Load xopt
         for i in range(1, 16): file_load(self.input_data_dir, 'F%d-xopt.txt' % i)
         # Load p
