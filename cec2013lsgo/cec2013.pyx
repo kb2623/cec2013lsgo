@@ -27,8 +27,10 @@ def file_load(data_dir: str, file_name: str):
 
 cdef class Benchmark:
     cdef Benchmarks * bench
+    cdef int no_fun
 
     def __init__(self, no_fun: int = 1, input_data_dir: str = 'inputdata'):
+        self.no_fun = no_fun
         # Create benchmark
         self.bench = generateFuncObj(no_fun)
         # Set input data dir
@@ -58,7 +60,7 @@ cdef class Benchmark:
         for i in range(4, 12): file_load(input_data_dir, 'F%d-R100.txt' % i)
         for i in range(13, 15): file_load(input_data_dir, 'F%d-R100.txt' % i)
         
-    cpdef get_info(self, int fun):
+    cpdef get_info(self):
         r"""Return the lower bound of the function.
 
         Args:
@@ -67,9 +69,9 @@ cdef class Benchmark:
         cdef double optimum
         cdef double range_fun
         optimum = 0
-        if (fun in [2, 5, 9]):
+        if (self.no_fun in [2, 5, 9]):
             range_fun = 5
-        elif (fun in [3, 6, 10]):
+        elif (self.no_fun in [3, 6, 10]):
             range_fun = 32
         else:
             range_fun = 100
