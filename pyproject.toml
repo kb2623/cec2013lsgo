@@ -8,7 +8,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "cec2013lsgo"
 version = "2.0"
-requires-python = ">=3.13"
+requires-python = ">=3.12"
 authors = [
   {name = "Daniel Molina", email = "dmolina@decsai.ugr.es"},
   {name = "Klemen Berkovic", email = "klemen.berkovic@student.um.si"},

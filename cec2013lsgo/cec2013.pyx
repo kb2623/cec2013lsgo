@@ -1,48 +1,15 @@
 #!python
 #cython: language_level=2, boundscheck=False
 import os
-import sys
 import pkgutil
 
-import cython
 from libc.stdlib cimport malloc, free
 
-
-if sys.version < '3':
-    def b(x):
-        return x
-else:
-    import codecs
-    def b(x):
-        return codecs.latin_1_encode(x)[0]
-
-
-cdef extern from "eval_func.h":
-    void set_func(int funid)
-    double eval_sol(double*)
-    void set_data_dir(char * new_data_dir)
-    void free_func()
-    void next_run()
-
-
-def _cec2013_test_func(double[::1] x):
-    cdef int dim
-    cdef double fitness
-    cdef double * sol
-
-    dim = x.shape[0]
-
-    sol = <double *> malloc(dim * cython.sizeof(double))
-
-    if sol is NULL:
-        raise MemoryError()
-
-    for i in xrange(dim):
-        sol[i] = x[i]
-
-    fitness = eval_sol(sol)
-    free(sol)
-    return fitness
+from cec2013decl cimport (
+    Benchmarks,
+    generateFuncObj,
+    free_func
+)
 
 
 def file_load(data_dir: str, file_name: str):
@@ -59,10 +26,14 @@ def file_load(data_dir: str, file_name: str):
 
 cdef class Benchmark:
     cdef public str input_data_dir
+    cdef Benchmarks * bench
 
-    def __init__(self, input_data_dir: str = 'inputdata'):
+    def __init__(self, no_fun: int = 1, input_data_dir: str = 'inputdata'):
+        # Create benchmark
+        self.bench = generateFuncObj(no_fun)
         # Set input data dir
         self.input_data_dir = input_data_dir
+        self.set_data_dir(self.input_data_dir)
         # Create input data dir
         os.makedirs(self.input_data_dir, exist_ok=True)
         # Load xopt
@@ -94,36 +65,41 @@ cdef class Benchmark:
         """
         cdef double optimum
         cdef double range_fun
-
         optimum = 0
-
         if (fun in [2, 5, 9]):
             range_fun = 5
         elif (fun in [3, 6, 10]):
             range_fun = 32
         else:
             range_fun = 100
-
-        return {'lower': -range_fun, 'upper': range_fun, 'threshold': 0,
-                'best': optimum, 'dimension': 1000}
+        return {
+            'lower': -range_fun,
+            'upper': range_fun,
+            'threshold': 0,
+            'best': optimum,
+            'dimension': 1000
+        }
 
     def get_num_functions(self):
         return 15
 
-    def __dealloc(self):
-        free_func()
-
     cpdef next_run(self):
-        next_run()
+        self.bench.nextRun()
 
-    cpdef get_function(self, int fun):
-        r"""Get optimization function for evaluate the solution.
+    cpdef eval(self, double[::1] x):
+        # Reserve the array to pass to C
+        cdef double * y = <double *> malloc(1000 * sizeof(double))
+        if y == NULL: raise MemoryError()
+        # Copy the original values
+        for i in range(1000): y[i] = x[i]
+        # Calculate the fitness value
+        cdef double fx = self.bench.compute(y)
+        # Free the memeory
+        free(y)
+        # Convert and return the value (python cannot work with long double)
+        return float(fx)    
 
-        Args:
-            fun (int): Optimization fucntion number.
-        """
-        set_func(fun)
-        cdef bytes dir_name = ('%s/%s' % (os.getcwd(), self.input_data_dir)).encode()
-        set_data_dir(dir_name)
-        return _cec2013_test_func
-    
+    def __dealloc(self):
+        free_func(self.bench)
+
+

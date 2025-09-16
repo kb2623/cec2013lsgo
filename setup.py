@@ -26,7 +26,7 @@ if os.environ.get('DEBUG', '0') == '1':
     if sys.platform == 'win32': compiler_args.extend(['/Zi', '/Od'])
     else: compiler_args.extend(['-g', '-O0'])
 else:
-    compiler_args.extend(['-std=c2x', '-O3', '-march=native'])
+    compiler_args.extend(['-std=c++11', '-O3', '-march=native'])
 
 link_args = []
 if os.environ.get('DEBUG', '0') == '1' and sys.platform == 'win32':
@@ -47,5 +47,5 @@ cec2013lsgo = Extension(
 setup(
     ext_modules=[cec2013lsgo],
     packages=find_packages(),
-    package_data={'cec2013lsgo': ['cdatafiles/*.txt', '*.h']},
+    package_data={'cec2013lsgo': ['cdatafiles/*.txt', '*.h', 'cec2013decl.pxd']},
 )

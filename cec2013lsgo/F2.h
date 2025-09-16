@@ -3,7 +3,6 @@
 
 #include "Benchmarks.h"
 
-
 class F2:public Benchmarks{
 protected:
 

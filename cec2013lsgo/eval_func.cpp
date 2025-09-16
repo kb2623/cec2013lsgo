@@ -1,3 +1,5 @@
+#include "eval_func.h"
+
 #include <iostream>
 #include <cstring>
 #include <cstdio>
@@ -5,33 +7,11 @@
 #include <sstream>
 #include <cassert>
 
-// benchmark set header files
-#include "F1.h"
-#include "F2.h"
-#include "F3.h"
-#include "F4.h"
-#include "F5.h"
-#include "F6.h"
-#include "F7.h"
-#include "F8.h"
-#include "F9.h"
-#include "F10.h"
-#include "F11.h"
-#include "F12.h"
-#include "F13.h"
-#include "F14.h"
-#include "F15.h"
-
 using namespace std;
 
-Benchmarks* generateFuncObj(int funcID);
-
-static Benchmarks* bench = NULL;
-
-Benchmarks* generateFuncObj(int funcID);
+static Benchmarks* bench=NULL;
 
 void set_func(int funcID) {
-    if (bench != NULL) free_func();
     bench = generateFuncObj(funcID);
     bench->nextRun();
 }
@@ -50,6 +30,13 @@ void set_data_dir(char *new_data_dir) {
 }
 
 void free_func(void) {
+   if (bench) {
+      delete bench;
+   }
+   bench = NULL;
+}
+
+void free_func(Benchmarks * bench) {
    if (bench) {
       delete bench;
    }
@@ -94,5 +81,6 @@ Benchmarks* generateFuncObj(int funcID){
     cerr<<"Fail to locate Specified Function Index"<<endl;
     exit(-1);
   }
+  fp->nextRun();
   return fp;
 }
