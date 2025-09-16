@@ -32,7 +32,8 @@ cdef class Benchmark:
         # Create benchmark
         self.bench = generateFuncObj(no_fun)
         # Set input data dir
-        cdef string cpp_path = input_data_dir.encode()
+        cdef bytes b = input_data_dir.encode('utf-8')
+        cdef string cpp_path = b
         self.bench.set_data_dir(cpp_path)
         # Create input data dir
         os.makedirs(input_data_dir, exist_ok=True)
